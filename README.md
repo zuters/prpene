@@ -1,6 +1,6 @@
-# PRPE (Prefix-Root-Postfix-Encoding) Segmenter
+# PRPE (Prefix-Root-Postfix-Encoding) Segmenter With Named Entity Processing Prototype
 
-This repository contains python (2 and 3) text segmentation scripts for machine translation.
+This repository contains Python3 text segmentation scripts for machine translation.
 
 ## The main principles
 
