@@ -1,6 +1,7 @@
 # PRPE (Prefix-Root-Postfix-Encoding) Segmenter With Named Entity Processing Prototype
 
 This repository contains Python3 text segmentation scripts for machine translation.
+These scripts are based on [github.com/zuters/prpe] with named-entity functionality added.
 
 ## The main principles
 
@@ -14,11 +15,11 @@ This repository contains Python3 text segmentation scripts for machine translati
 ## Usage instructions
 
 PRPE is used in the following way:
-  - Learning phase (files of potential segments produced): learn_prpe.py
-  - Segmentation phase (using produced files of the previous phase): apply_prpe.py
-  - Removing segmentation: unprocess_prpe.py
+  - Learning phase (files of potential segments produced): learn_prpe_ne.py
+  - Segmentation phase (using produced files of the previous phase): collect_prpe_ne, apply_prpe_ne_train.py, apply_prpe_ne_translate.py
+  - Removing segmentation: unprocess_prpe_ne_train.py, unprocess_prpe_ne_train.py
 
-### Phase #1. Learning ([learn_prpe.py])
+### Phase #1. Learning ([learn_prpe_ne.py])
 
 During this phase several 'code' files are produced from the {corpus} representing building blocks for the segmentation:
   - {prefixes}
@@ -43,7 +44,7 @@ where postfix "ables" consists of:
 **Running the learning script**:
 
 ```sh
-prpe6/learn_prpe.py -i {corpus} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -a {prefix rate} -b {suffix rate} -c {postfix rate} -v {vocabulary size} -l {language}
+prpe9/learn_prpe_ne.py -i {corpus} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -a {prefix rate} -b {suffix rate} -c {postfix rate} -v {vocabulary size} -l {language}
 ```
 
 ***where***:
@@ -57,12 +58,12 @@ All the rates (prefix, suffix, postfix, vocabulary) should be experimentally tun
 
 **Sample configuration** used for **Latvian** (see produced files in 'codefiles-lv' directory):
 ```sh
-prpe6/learn_prpe.py -i corpus.lv -p prefixes.lv -r roots.lv -s suffixes.lv -t postfixes.lv -u endings.lv -w words.lv -a 32 -b 1000 -c 0.1 -v 5000 -l lv
+prpe9/learn_prpe_ne.py -i corpus.lv -p prefixes.lv -r roots.lv -s suffixes.lv -t postfixes.lv -u endings.lv -w words.lv -a 32 -b 1000 -c 0.1 -v 5000 -l lv
 ```
 
 **Sample configuration** used for **English** (see produced files in 'codefiles-en' directory):
 ```sh
-prpe6/learn_prpe.py -i corpus.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -a 32 -b 200 -c 180 -v 5000 -l en
+prpe9/learn_prpe_ne.py -i corpus.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -a 32 -b 200 -c 180 -v 5000 -l en
 ```
 
 Just for a brief insight; the first 10 English prefixes collected in the learning phase (in file {prefixes}):
@@ -78,24 +79,57 @@ Just for a brief insight; the first 10 English prefixes collected in the learnin
  * im 10
 
 
-### Phase #2. Segmentation ([apply_prpe.py])
+### Phase #2. Segmentation ([collect_prpe_ne.py], [apply_prpe_ne_train.py], [apply_prpe_ne_translate.py])
 
 During this phase, input text is segmented using 'code' files produced in the learning phase.
 
-**Running the segmentation script**:
+##### #2.1. Segmentation of the training corpora
+
+During this subphase, training corpora for a machine translation system are prepared (note that for translation using trained system (e.g., validation), segmentation is carried out differently).
+
+**2.1.1. Collect named-entity pairs from parallel corpora for segmentation of training data**:
 
 ```sh
-prpe6/apply_prpe.py -i {input text} -o {output text} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -l {language} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
+prpe9/collect_prpe_ne.py -i {input corpus file #1} -k {input corpus file #2} -o {named-entity list file #1} -p {named-entity list file #1}
+```
+
+During this process, two named-entity list files are created to be used in the segmentation process in the next step.
+
+**2.1.2. Running the segmentation script for training data**:
+
+```sh
+prpe9/apply_prpe_ne_train.py -i {input-text} -o {output-text} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -e {named-entities} -l {language} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
 ```
 
 ***where***:
-  - prefixes, roots, suffixes, postfixes, endings: files produced in the learning phase
+  - input-text: input file to be segmented
+  - output-text: output file of segmented text
+  - prefixes, roots, suffixes, postfixes, endings: input files produced in the learning phase
+  - named-entities: input file produced in step 2.1.1 for particular corpus
   - language: for the present, only 'lv' and 'en' are acceptable
-  - segmentation mode -- to determine segmentation optimization, processing words with uppercase and usage of segmentation markers (see below)
+  - segmentation mode -- to determine segmentation optimization, processing words with uppercase and usage of segmentation markers (see the description below)
   - segmentation marker -- a character or sequence of character to mark segments to constitute words (if sequence of digits, then is converted to the character represented by that number, default '9474')
   - upercase marker -- a character or sequence of character to mark next word as starting with uppercase (if sequence of digits, then is converted to the character represented by that number, default '9553')
 
-##### Segmentation mode
+##### #2.2. Segmentation for translation
+
+During this subphase, a text corpus is segmented to be used with a trained machine translation system (note that for training purposes, segmentation is carried out differently).
+
+```sh
+prpe9/apply_prpe_ne_tranaslate.py -i {input-text} -o {output-text} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -e {named-entities} -l {language} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
+```
+
+***where***:
+  - input-text: input file to be segmented
+  - output-text: output file of segmented text
+  - prefixes, roots, suffixes, postfixes, endings: input files produced in the learning phase
+  - named-entities: output file of named entities found in input-text (note that with segmenting training data named entities were collected in different process and supplied as input). This file will be used in desegmentation after translation
+  - language: for the present, only 'lv' and 'en' are acceptable
+  - segmentation mode -- to determine segmentation optimization, processing words with uppercase and usage of segmentation markers (see the description below)
+  - segmentation marker -- a character or sequence of character to mark segments to constitute words (if sequence of digits, then is converted to the character represented by that number, default '9474')
+  - upercase marker -- a character or sequence of character to mark next word as starting with uppercase (if sequence of digits, then is converted to the character represented by that number, default '9553')
+
+##### #2.3. Description of 'Segmentation mode' parameter
 
 Segmentation mode is a positive integer number up to 4 digits in the form ABCC, where
   - A: optimization mode
@@ -130,22 +164,37 @@ Although there are modes 0, 1, 2, 3 available, we suggest using mode 3 (marker i
 
 Examples of valid segmentation modes: 3, 103, 2103, 1003
 
-**Sample configuration** of segmentation used for **English** (paramaters for markers omitted):
+**Sample configuration** of collecting named entities from training corpora:
 ```sh
-prpe6/apply_prpe.py -i input.en -o output.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -l en -d 2103
+prpe9/collect_prpe_ne.py -i input.en -k input.lv -o train_nents.en -p train_nents.lv
 ```
 
-### 3. Removing segmentation ([unprocess_prpe.py])
+**Sample configuration** of segmentation for training used for **English** (paramaters for markers omitted):
+```sh
+prpe9/apply_prpe_ne_train.py -i input.en -o output.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -e train_nents.en -l en -d 2103
+```
 
-During this operation, a segmented text is coverted back to a normal text:
+**Sample configuration** of segmentation for translation used for **English** (paramaters for markers omitted):
+```sh
+prpe9/apply_prpe_ne_translate.py -i input.en -o output.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -e translate_nents.en -l en -d 2103
+```
+
+### 3. Removing segmentation ([unprocess_prpe_ne_translate.py]) from translated text
+
+During this operation, a segmented text is coverted back to a normal text (after translation and some post-processing):
 
 ```sh
-prpe6/unprocess_prpe.py -i {input text} -o {output text} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
+prpe9/unprocess_prpe_ne_translate.py -i {input-text} -o {output-text} -e {named-entities} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
 ```
+
+***where***:
+  - input-text: input file to be desegmented
+  - output-text: output file of desegmented text
+  - named-entities: input file of named entities produced in segmentation for translation (step #2.2)
 
 For example:
 ```sh
-prpe6/unprocess_prpe.py -i input.en -o output.en -d 2103 -m / -n |
+prpe6/unprocess_prpe.py -i input.en -o output.en -e translate_nents.en -d 2103 -m / -n |
 ```
 will convert text
 *"| un/ believ/ able sales/ persons"*
@@ -177,7 +226,7 @@ A brief activity list for adaptaion:
 
 ## Publications
 
-Jānis Zuters, Gus Strazds, and Kārlis Immers. Semi-Automatic Quasi-Morphological Word Segmentation for Neural Machine Translation.
+Jānis Zuters, Gus Strazds, and Viktorija Ļeonova. Morphology-Inspired Word Segmentation for Neural Machine Translation.
 To appear.
 
 ## Acknowledgements
@@ -185,7 +234,10 @@ To appear.
 The research has been supported by the European Regional Development Fund within the research project ”Neural Network Modelling for Inflected Natural Languages” No. 1.1.1.1/16/A/215, and the Faculty of Computing, University of Latvia.
 
    [BPE]: <https://github.com/rsennrich/subword-nmt>
-   [learn_prpe.py]: <https://github.com/zuters/prpe/prpe6/learn_prpe.py>
-   [apply_prpe.py]: <https://github.com/zuters/prpe/prpe6/apply_prpe.py>
-   [unprocess_prpe.py]: <https://github.com/zuters/prpe/prpe6/unprocess_prpe.py>
-   [prpe.py]: <https://github.com/zuters/prpe/prpe6/prpe.py>
+   [learn_prpe_ne.py]: <https://github.com/zuters/prpene/prpe9/learn_prpe_ne.py>
+   [collect_prpe_ne.py]: <https://github.com/zuters/prpene/prpe9/collect_prpe_ne.py>
+   [apply_prpe_ne_train.py]: <https://github.com/zuters/prpene/prpe9/apply_prpe_ne_train.py>
+   [apply_prpe_ne_translate.py]: <https://github.com/zuters/prpene/prpe9/apply_prpe_ne_translate.py>
+   [unprocess_prpe_ne_translate.py]: <https://github.com/zuters/prpene/prpe9/unprocess_prpe_ne_translate.py>
+   [prpe_ne.py]: <https://github.com/zuters/prpene/prpe9/prpe.py>
+   [github.com/zuters/prpe]: <https://github.com/zuters/prpe>
