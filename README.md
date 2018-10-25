@@ -219,8 +219,8 @@ back into
 
 To make the adaptation, it is unfortunately required that you have some understanding about the language.
 
-A brief activity list for adaptaion:
-  - in [prpe.py], add the language specific information to the function "add_heuristics" which can eventually cause creation of several language specific function (such as "is_good_root")
+A brief activity list for adaptation:
+  - in [prpe_ne.py], add the language specific information to the function "add_heuristics" which can eventually cause creation of several language specific function (such as "is_good_root")
   - run learning phase with looser hyperparameters for code files, i.e., "-a 1000 -b 0.1 -c 0.1"
   - go through the code files (prefixes, postfixes, suffixes, endings) to determine the number of words parts to be collected for segmentation, and eventually to additionally adjust the language specific source code.
 
@@ -239,5 +239,5 @@ The research has been supported by the European Regional Development Fund within
    [apply_prpe_ne_train.py]: <https://github.com/zuters/prpene/prpe9/apply_prpe_ne_train.py>
    [apply_prpe_ne_translate.py]: <https://github.com/zuters/prpene/prpe9/apply_prpe_ne_translate.py>
    [unprocess_prpe_ne_translate.py]: <https://github.com/zuters/prpene/prpe9/unprocess_prpe_ne_translate.py>
-   [prpe_ne.py]: <https://github.com/zuters/prpene/prpe9/prpe.py>
+   [prpe_ne.py]: <https://github.com/zuters/prpene/prpe9/prpe_ne.py>
    [github.com/zuters/prpe]: <https://github.com/zuters/prpe>
