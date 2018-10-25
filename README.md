@@ -194,7 +194,7 @@ prpe9/unprocess_prpe_ne_translate.py -i {input-text} -o {output-text} -e {named-
 
 For example:
 ```sh
-prpe6/unprocess_prpe.py -i input.en -o output.en -e translate_nents.en -d 2103 -m / -n |
+prpe9/unprocess_prpe.py -i input.en -o output.en -e translate_nents.en -d 2103 -m / -n |
 ```
 will convert text
 *"| un/ believ/ able sales/ persons"*
