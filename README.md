@@ -90,7 +90,7 @@ During this subphase, training corpora for a machine translation system are prep
 **2.1.1. Collect named-entity pairs from parallel corpora for segmentation of training data**:
 
 ```sh
-prpe9/collect_prpe_ne.py -i {input corpus file #1} -k {input corpus file #2} -o {named-entity list file #1} -p {named-entity list file #1}
+prpe9/collect_prpe_ne.py -i {input corpus file #1} -k {input corpus file #2} -o {named-entity list file #1} -p {named-entity list file #2}
 ```
 
 During this process, two named-entity list files are created to be used in the segmentation process in the next step.
