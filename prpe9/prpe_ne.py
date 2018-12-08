@@ -1000,7 +1000,7 @@ def obtain_segment_track(bestprecodetree,roottree,
     """ Collect list of segmentation tracks, each in form (prefix, root, postfix)+ and compute weights (the less, the better)
         and return the best one
     """
-    if extramode!=1 and extramode!=4 and word in bestvocab:
+    if extramode!=1 and extramode!=4 and word in bestvocab or len (word)>20:
         return None # None indicates word from bestvocab later (in segment_word)
     
     prematrix = []
