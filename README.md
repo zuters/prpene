@@ -226,8 +226,7 @@ A brief activity list for adaptation:
 
 ## Publications
 
-Jānis Zuters, Gus Strazds, and Viktorija Ļeonova. Morphology-Inspired Word Segmentation for Neural Machine Translation.
-To appear.
+Jānis Zuters, Gus Strazds, and Viktorija Ļeonova. Morphology-Inspired Word Segmentation for Neural Machine Translation. Databases and Information Systems X. (Frontiers in Artificial Intelligence and Applications; Vol. 315). IOS Press, 2019 Vol. 315 (2019), p.225-239. DOI: 10.3233/978-1-61499-941-6-225.
 
 ## Acknowledgements
 
